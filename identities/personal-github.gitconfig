@@ -4,5 +4,27 @@
   name = Tristan Jahnke
   username = RemoteRabbit
 
+# SSH authentication (comment out if using HTTPS/PAT)
 [core]
   sshCommand = "ssh -i ~/.ssh/proton"
+
+# HTTPS/PAT authentication options (uncomment one):
+
+# Option 1: Separate files per identity (more organized)
+# [credential "https://github.com"]
+#   username = RemoteRabbit
+#   helper = store --file ~/.git-credentials-personal
+
+# Option 2: Single shared credential file (simpler)
+# [credential "https://github.com"]
+#   username = RemoteRabbit
+#   helper = store
+
+# Option 3: Memory cache (more secure, temporary)
+# [credential "https://github.com"]
+#   username = RemoteRabbit
+#   helper = cache --timeout=3600
+
+# Option 4: Bitwarden integration (most secure)
+# [credential "https://github.com"]
+#   helper = ~/repos/personal/git/helpers/git-credential-bitwarden

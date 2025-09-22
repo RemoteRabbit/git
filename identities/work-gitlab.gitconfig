@@ -4,5 +4,27 @@
   name = Tristan Jahnke
   username = your-work-gitlab-username
 
+# SSH authentication (comment out if using HTTPS/PAT)
 [core]
   sshCommand = "ssh -i ~/.ssh/work_gitlab_key"
+
+# HTTPS/PAT authentication options (uncomment one):
+
+# Option 1: Separate files per identity (more organized)
+# [credential "https://gitlab.com"]
+#   username = your-work-gitlab-username
+#   helper = store --file ~/.git-credentials-work-gitlab
+
+# Option 2: Single shared credential file (simpler)
+# [credential "https://gitlab.com"]
+#   username = your-work-gitlab-username
+#   helper = store
+
+# Option 3: Memory cache (more secure, temporary)
+# [credential "https://gitlab.com"]
+#   username = your-work-gitlab-username
+#   helper = cache --timeout=3600
+
+# Option 4: Bitwarden integration (most secure)
+# [credential "https://gitlab.com"]
+#   helper = ~/repos/personal/git/helpers/git-credential-bitwarden

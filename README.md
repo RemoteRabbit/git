@@ -42,10 +42,14 @@ Git automatically switches identities based on:
 1. **Initial setup**: `./setup.sh`
 2. **Symlink**: `ln -s $(pwd)/.gitconfig ~/.gitconfig`
 3. **Create directory structure**:
-
    ```bash
    mkdir -p ~/repos/{personal,work/{github,gitlab}}
    ```
+4. **Authentication setup**:
+   - **SSH**: Keys are configured by `setup.sh`
+   - **HTTPS/PAT**: Run `./setup-credentials.sh` for token-based auth
+     - Auto-detects Bitwarden CLI for secure credential storage
+     - Falls back to file-based storage if Bitwarden unavailable
 
 ## Usage
 
@@ -136,6 +140,39 @@ ssh-add -l
 ssh -i ~/.ssh/work_github_key -T git@github.com
 ```
 
+### Bitwarden Issues
+```bash
+# Check Bitwarden status
+bw status
+
+# Unlock vault
+bw unlock
+
+# List Git credentials
+bw list items --search "Git -"
+
+# Test credential retrieval
+bw get item "Git - GitHub - Personal"
+
+# Set session for automated workflows
+export BW_SESSION="$(bw unlock --raw)"
+```
+
+### Credential Helper Issues
+```bash
+# Check which helper is active
+git config --get credential.helper
+
+# Test credential helper manually
+echo -e "protocol=https\nhost=github.com" | git credential fill
+
+# Clear cached credentials
+git credential reject <<EOF
+protocol=https
+host=github.com
+EOF
+```
+
 ### Config Not Loading
 
 ```bash
@@ -164,32 +201,102 @@ git config --show-origin --get user.email
 - `git up` - Push current branch upstream
 - `git dm` - Delete merged branches
 
-## SSH Key Setup
+## Authentication Setup
 
-### Personal Key (GitHub)
-
+### SSH Keys
 ```bash
-# Generate if needed
+# Personal key (GitHub)
 ssh-keygen -t ed25519 -f ~/.ssh/proton -C "trjahnke@protonmail.com"
-
-# Add to SSH agent
 ssh-add ~/.ssh/proton
 
-# Add public key to GitHub
-cat ~/.ssh/proton.pub
+# Work keys
+ssh-keygen -t ed25519 -f ~/.ssh/work_github_key -C "work-email@company.com"
+ssh-keygen -t ed25519 -f ~/.ssh/work_gitlab_key -C "work-email@company.com"
+ssh-add ~/.ssh/work_github_key ~/.ssh/work_gitlab_key
 ```
 
-### Work Keys
+### PAT/Token Authentication
+
+#### Automated Setup (Recommended)
+```bash
+# Interactive setup with Bitwarden or file-based storage
+./setup-credentials.sh
+
+# The script will:
+# 1. Detect if Bitwarden CLI is available
+# 2. Prompt for Bitwarden vs file-based storage
+# 3. Check for existing credentials
+# 4. Create/update credential storage
+# 5. Configure the appropriate git credential helper
+```
+
+#### Manual Setup Options
+
+**Option 1: Bitwarden (Most Secure)**
+```bash
+# Install prerequisites
+npm install -g @bitwarden/cli
+sudo pacman -S jq
+
+# Create items in Bitwarden with names like:
+# "Git - GitHub - Personal", "Git - GitHub - Work", etc.
+
+# Enable in identity configs (uncomment Option 4)
+vim identities/personal-github.gitconfig
+```
+
+**Option 2: File-based Storage**
+```bash
+# Create credential files:
+echo "https://username:token@github.com" > ~/.git-credentials-personal
+echo "https://username:token@github.com" > ~/.git-credentials-work-github  
+echo "https://username:token@gitlab.com" > ~/.git-credentials-work-gitlab
+chmod 600 ~/.git-credentials-*
+
+# Enable in identity configs (uncomment Option 1 or 2)
+vim identities/personal-github.gitconfig
+```
+
+### Switching Authentication Methods
+
+Each identity config supports multiple authentication options:
+
+1. **SSH** - Uses SSH keys (default)
+2. **File-based credentials** - Plain text files (separate per identity) 
+3. **Shared credential store** - Single file for all credentials
+4. **Memory cache** - Temporary storage, expires after timeout
+5. **Bitwarden integration** - Encrypted vault storage
 
 ```bash
-# GitHub work key
-ssh-keygen -t ed25519 -f ~/.ssh/work_github_key -C "work-email@company.com"
-ssh-add ~/.ssh/work_github_key
+# Edit identity config to change method
+vim identities/personal-github.gitconfig
 
-# GitLab work key  
-ssh-keygen -t ed25519 -f ~/.ssh/work_gitlab_key -C "work-email@company.com"
-ssh-add ~/.ssh/work_gitlab_key
+# Uncomment the desired option:
+# [credential "https://github.com"]
+#   helper = ~/repos/personal/git/helpers/git-credential-bitwarden  # Bitwarden
+#   helper = store --file ~/.git-credentials-personal              # File-based
+#   helper = store                                                 # Shared
+#   helper = cache --timeout=3600                                  # Memory
 ```
+
+## Security Considerations
+
+### Credential Storage Options (Most to Least Secure)
+
+1. **SSH Keys** - Private keys encrypted on disk, no network transmission of secrets
+2. **Bitwarden** - PATs encrypted in vault, centralized management, audit trail
+3. **Memory Cache** - Temporary storage, clears on timeout/reboot
+4. **File-based** - Plain text files (chmod 600), separate per context
+5. **Shared Store** - Single plain text file for all credentials
+
+### Best Practices
+
+- **Use fine-grained PATs** with minimal required permissions
+- **Set expiration dates** on tokens and rotate regularly  
+- **Enable 2FA** on provider accounts
+- **Monitor access logs** for unauthorized usage
+- **Use Bitwarden** for credential storage when possible
+- **Keep vault locked** when not actively using git
 
 ## Directory Organization
 
@@ -206,4 +313,24 @@ ssh-add ~/.ssh/work_gitlab_key
     └── gitlab/         # Work GitLab projects
         ├── enterprise-app/
         └── deployment-scripts/
+```
+
+## Files Reference
+
+```
+git/
+├── .gitconfig                           # Main config with includes
+├── setup.sh                           # Initial setup script  
+├── setup-credentials.sh                # Credential setup script
+├── setup-bitwarden.md                 # Bitwarden setup guide
+├── README.md                          # This documentation
+├── providers/
+│   ├── github.gitconfig               # GitHub URL rewrites & credentials
+│   └── gitlab.gitconfig               # GitLab URL rewrites & proxy
+├── identities/
+│   ├── personal-github.gitconfig      # Personal GitHub identity
+│   ├── work-github.gitconfig          # Work GitHub identity
+│   └── work-gitlab.gitconfig          # Work GitLab identity
+└── helpers/
+    └── git-credential-bitwarden       # Bitwarden credential helper
 ```
