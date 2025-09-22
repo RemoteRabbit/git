@@ -43,7 +43,7 @@
 	untracked = cyan
 
 [commit]
-	gpgsign = false
+	gpgsign = true
 
 [core]
 	editor = vim
@@ -67,29 +67,23 @@
 [remote "origin"]
 	fetch = +refs/pull/*/head:refs/remotes/origin/pull/*
 
-[url "git@github.com:github"]
-	insteadOf = "https://github.com/github"
-	insteadOf = "github:github"
-	insteadOf = "git://github.com/github"
+# Include provider-specific configurations
+[include]
+	path = ~/repos/personal/git/providers/github.gitconfig
+	path = ~/repos/personal/git/providers/gitlab.gitconfig
 
-[url "git@github.com:"]
-	pushInsteadOf = "https://github.com/"
-	pushInsteadOf = "github:"
-	pushInsteadOf = "git://github.com/"
+# Directory-based conditional includes with provider-specific identities
+# Personal projects (GitHub only)
+[includeIf "gitdir:~/repos/personal/**"]
+  path = ~/repos/personal/git/identities/personal-github.gitconfig
 
-[url "git://github.com/"]
-	insteadOf = "github:"
+# Work projects - separate by provider
+[includeIf "gitdir:~/repos/work/github/**"]
+  path = ~/repos/personal/git/identities/work-github.gitconfig
 
-[url "git@gist.github.com:"]
-	insteadOf = "gst:"
-	pushInsteadOf = "gist:"
-	pushInsteadOf = "git://gist.github.com/"
+[includeIf "gitdir:~/repos/work/gitlab/**"]
+  path = ~/repos/personal/git/identities/work-gitlab.gitconfig
 
-[url "git://gist.github.com/"]
-	insteadOf = "gist:"
-
-[user]
-  email = trjahnke@protonmail.com
-  name = Tristan Jahnke
-  username = RemoteRabbit
-
+# URL-based matching for work projects outside standard directories
+[includeIf "hasconfig:remote.*.url:git@gitlab.com:**"]
+  path = ~/repos/personal/git/identities/work-gitlab.gitconfig

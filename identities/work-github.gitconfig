@@ -1,0 +1,8 @@
+# Work identity for GitHub
+[user]
+  email = your-work-github-email@company.com
+  name = Tristan Jahnke
+  username = your-work-github-username
+
+[core]
+  sshCommand = "ssh -i ~/.ssh/work_github_key"

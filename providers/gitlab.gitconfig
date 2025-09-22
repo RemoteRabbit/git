@@ -1,0 +1,18 @@
+# GitLab-specific configuration
+[url "git@gitlab.com:"]
+  pushInsteadOf = "https://gitlab.com/"
+  pushInsteadOf = "gitlab:"
+  pushInsteadOf = "git://gitlab.com/"
+
+[url "git://gitlab.com/"]
+  insteadOf = "gitlab:"
+
+# GitLab credential helper (if using glab CLI)
+# [credential "https://gitlab.com"]
+#   helper = !/usr/bin/glab auth git-credential
+
+# Proxy settings for GitLab (uncomment and configure as needed)
+# [http "https://gitlab.com"]
+#   proxy = http://proxy.company.com:8080
+# [https "https://gitlab.com"]  
+#   proxy = http://proxy.company.com:8080

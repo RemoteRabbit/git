@@ -1,0 +1,8 @@
+# Work identity for GitLab
+[user]
+  email = your-work-gitlab-email@company.com
+  name = Tristan Jahnke
+  username = your-work-gitlab-username
+
+[core]
+  sshCommand = "ssh -i ~/.ssh/work_gitlab_key"

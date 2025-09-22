@@ -1,0 +1,8 @@
+# Personal identity for GitHub
+[user]
+  email = trjahnke@protonmail.com
+  name = Tristan Jahnke
+  username = RemoteRabbit
+
+[core]
+  sshCommand = "ssh -i ~/.ssh/proton"

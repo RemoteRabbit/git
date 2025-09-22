@@ -1,0 +1,30 @@
+# GitHub-specific configuration
+[url "git@github.com:github"]
+  insteadOf = "https://github.com/github"
+  insteadOf = "github:github"
+  insteadOf = "git://github.com/github"
+
+[url "git@github.com:"]
+  pushInsteadOf = "https://github.com/"
+  pushInsteadOf = "github:"
+  pushInsteadOf = "git://github.com/"
+
+[url "git://github.com/"]
+  insteadOf = "github:"
+
+[url "git@gist.github.com:"]
+  insteadOf = "gst:"
+  pushInsteadOf = "gist:"
+  pushInsteadOf = "git://gist.github.com/"
+
+[url "git://gist.github.com/"]
+  insteadOf = "gist:"
+
+[credential "https://github.com"]
+  helper = !/usr/bin/gh auth git-credential
+[credential "git://github.com"]
+  helper = !/usr/bin/gh auth git-credential
+[credential "git://gist.github.com"]
+  helper = !/usr/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+  helper = !/usr/bin/gh auth git-credential
