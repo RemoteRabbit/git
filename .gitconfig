@@ -60,6 +60,7 @@
   defaultBranch = main
 
 [merge]
+  conflictStyle = zdiff3
 	log = true
 
 [pull]
