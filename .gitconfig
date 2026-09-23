@@ -76,6 +76,10 @@
 # Personal projects (GitHub only)
 [includeIf "gitdir:~/repos/personal/**"]
   path = ~/repos/personal/git/identities/personal-github.gitconfig
+[includeIf "gitdir:~/repos/open/**"]
+  path = ~/repos/personal/git/identities/personal-github.gitconfig
+[includeIf "gitdir:~/Projects/**"]
+  path = ~/repos/personal/git/identities/personal-github.gitconfig
 
 # Work projects - separate by provider
 [includeIf "gitdir:~/repos/work/github/**"]
