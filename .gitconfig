@@ -71,7 +71,11 @@
 	autoSetupRemote = true
 
 [remote "origin"]
-	fetch = +refs/pull/*/head:refs/remotes/origin/pull/*
+  fetch = +refs/pull/*/head:refs/remotes/origin/pull/*
+
+# Auto resolve some conflicts
+[rerere]
+  enabled = true
 
 # Include provider-specific configurations
 [include]
