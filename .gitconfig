@@ -48,7 +48,10 @@
 	gpgsign = true
 
 [core]
-	editor = vim
+	editor = nvim
+
+[fetch]
+  prune = true
 
 [help]
 	autocorrect = 1
